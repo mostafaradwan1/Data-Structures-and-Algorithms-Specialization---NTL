@@ -1,32 +1,50 @@
-# python3
-
-from collections import namedtuple
-
-AssignedJob = namedtuple("AssignedJob", ["worker", "started_at"])
+import heapq
 
 
-def assign_jobs(n_workers, jobs):
-    # TODO: replace this code with a faster algorithm.
-    result = []
-    next_free_time = [0] * n_workers
-    for job in jobs:
-        next_worker = min(range(n_workers), key=lambda w: next_free_time[w])
-        result.append(AssignedJob(next_worker, next_free_time[next_worker]))
-        next_free_time[next_worker] += job
+class Worker:
+    def __init__(self, thread_id, release_time=0):
+        self.thread_id = thread_id
+        self.release_time = release_time
 
-    return result
+    def __lt__(self, other):
+        if self.release_time == other.release_time:
+            return self.thread_id < other.thread_id
+        return self.release_time < other.release_time
 
-
-def main():
-    n_workers, n_jobs = map(int, input().split())
-    jobs = list(map(int, input().split()))
-    assert len(jobs) == n_jobs
-
-    assigned_jobs = assign_jobs(n_workers, jobs)
-
-    for job in assigned_jobs:
-        print(job.worker, job.started_at)
+    def __gt__(self, other):
+        if self.release_time == other.release_time:
+            return self.thread_id > other.thread_id
+        return self.release_time > other.release_time
 
 
-if __name__ == "__main__":
-    main()
+class JobQueue:
+    def read_data(self):
+        self.num_workers, m = map(int, input().split())
+        self.jobs = list(map(int, input().split()))
+        assert m == len(self.jobs)
+
+    def write_response(self):
+        for i in range(len(self.jobs)):
+            print(self.assigned_workers[i], self.start_times[i])
+
+    def assign_jobs(self):
+        # TODO: replace this code with a faster algorithm.
+        self.assigned_workers = [None] * len(self.jobs)
+        self.start_times = [None] * len(self.jobs)
+        worker_queue = [Worker(i) for i in range(self.num_workers)]
+        for i in range(len(self.jobs)):
+            worker = heapq.heappop(worker_queue)
+            self.assigned_workers[i] = worker.thread_id
+            self.start_times[i] = worker.release_time
+            worker.release_time += self.jobs[i]
+            heapq.heappush(worker_queue, worker)
+
+    def solve(self):
+        self.read_data()
+        self.assign_jobs()
+        self.write_response()
+
+
+if __name__ == '__main__':
+    job_queue = JobQueue()
+    job_queue.solve()
