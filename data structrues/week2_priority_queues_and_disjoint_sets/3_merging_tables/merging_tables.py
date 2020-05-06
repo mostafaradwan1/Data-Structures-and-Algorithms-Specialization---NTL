@@ -10,23 +10,45 @@ class Database:
         self.parents = list(range(n_tables))
 
     def merge(self, src, dst):
-        src_parent = self.get_parent(src)
-        dst_parent = self.get_parent(dst)
+        srcparents = self.getparents(src)
+        dstparents = self.getparents(dst)
 
-        if src_parent == dst_parent:
+        if srcparents == dstparents:
             return False
-
+        if self.ranks[srcparents] > self.ranks[dstparents]:
+            self.parents[dstparents] = srcparents
+            self.row_counts[srcparents] += self.row_counts[dstparents]
+            self.max_row_count = max(
+                self.max_row_count, self.row_counts[srcparents])
+        else:
+            self.parents[srcparents] = dstparents
+            self.row_counts[dstparents] += self.row_counts[srcparents]
+            self.max_row_count = max(
+                self.max_row_count, self.row_counts[dstparents])
+            if self.ranks[srcparents] == self.ranks[dstparents]:
+                self.ranks[dstparents] += 1
         # merge two components
         # use union by rank heuristic
         # update max_row_count with the new maximum table size
         return True
 
-    def get_parent(self, table):
+    def getparents(self, table):
         # find parent and compress path
-        return self.parents[table]
+        # compress pass
+        parents_to_update = []
+        root = table
+        while root != self.parents[root]:
+            parents_to_update.append(self.parents[root])
+            root = self.parents[root]
+
+        for parent in parents_to_update:
+            self.parents[parent] = root
+
+        return root
 
 
 def main():
+
     n_tables, n_queries = map(int, input().split())
     counts = list(map(int, input().split()))
     assert len(counts) == n_tables
