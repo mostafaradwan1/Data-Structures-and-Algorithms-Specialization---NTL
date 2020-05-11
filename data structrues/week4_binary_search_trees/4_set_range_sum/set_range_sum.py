@@ -131,24 +131,36 @@ def insert(x):
   root = merge(merge(left, new_vertex), right)
   
 def erase(x): 
-  global root
-  # Implement erase yourself
-  pass
+	global root
+	# Implement erase yourself
+	(left, right) = split(root, x)
+	(middle, right) = split(right, x + 1)
+	root = merge(left, right)
+
 
 def search(x): 
-  global root
-  # Implement find yourself
-  
-  return False
-  
+	global root
+	# Implement find yourself
+	result, root = find(root, x)
+	if result is None or result.key != x:
+		return False
+	return result.key == x
+	
 def sum(fr, to): 
-  global root
-  (left, middle) = split(root, fr)
-  (middle, right) = split(middle, to + 1)
-  ans = 0
-  # Complete the implementation of sum
+	global root
+	(left, middle) = split(root, fr)
+	(middle, right) = split(middle, to + 1)
+	ans = 0
+	# Complete the implementation of sum
+	if middle is None:
+		ans = 0
+		root = merge(left, right)
+	else:
+		ans = middle.sum
+		root = merge(merge(left, middle), right)
 
-  return ans
+	return ans
+
 
 MODULO = 1000000001
 n = int(stdin.readline())
