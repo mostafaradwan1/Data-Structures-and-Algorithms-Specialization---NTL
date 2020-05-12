@@ -1,3 +1,12 @@
+class Query:
+
+	def __init__(self, query):
+		self.type = query[0]
+		if self.type == 'check':
+			self.ind = int(query[1])
+		else:
+			self.s = query[1]
+
 class QueryProcessor:
 	_multiplier = 263
 	_prime = 1000000007
