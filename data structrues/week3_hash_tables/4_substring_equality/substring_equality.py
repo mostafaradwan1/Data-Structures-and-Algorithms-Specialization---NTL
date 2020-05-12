@@ -8,7 +8,7 @@ class Solver:
 	def ask(self, a, b, l):
 		return s[a:a+l] == s[b:b+l]
 
-s = sys.stdin.readline()
+s = sys.stdin.readline()	
 q = int(sys.stdin.readline())
 solver = Solver(s)
 for i in range(q):
