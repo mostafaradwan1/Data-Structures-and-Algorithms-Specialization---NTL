@@ -5,7 +5,20 @@ import queue
 
 def bipartite(adj):
     #write your code here
-    return -1
+    partition = [len(adj)] * len(adj)
+    partition=[0 for i in range(len(adj))]
+    partition[0] = 1
+    queue = []
+    queue.append(0)
+    while queue:
+        u = queue.pop(0)
+        for v in adj[u]:
+            if partition[v] == partition[u]:
+                return 0
+            if partition[v] ==0:
+                partition[v]=-partition[u]
+                queue.append(v)
+    return 1
 
 if __name__ == '__main__':
     input = sys.stdin.read()
