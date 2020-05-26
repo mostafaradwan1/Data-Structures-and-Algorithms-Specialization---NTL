@@ -4,7 +4,6 @@ def binary_search(input_array, value):
     start=0
     end=len(input_array)-1
     for i in range(len(input_array)):
-        print(start,mid,end)
         if input_array[mid] == value:
             return mid
         elif input_array[mid]<value:
